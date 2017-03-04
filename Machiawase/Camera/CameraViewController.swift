@@ -101,7 +101,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let altitude = (toLc.altitude - fromLc.altitude)
         
         //let x = y
-        let rang = atan2(latitude, longitude)
+        let rang = atan2(latitude, longitude) - 90
         let y = altitude * 0.5
         let x = dis * cos(rang * M_PI/180)
         
@@ -117,7 +117,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func update() {
-        if (currentLocation == nil) {
+        if (currentLocation == nil || heading == nil) {
             return
         }
         var peopleArray:[PeopleLocation] = []
@@ -150,7 +150,8 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
         let altitude = (toLc.altitude - fromLc.altitude)
         let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
-        peopleManager.update(with: [p])*/
+        peopleManager.update(with: [p])
+ */
     }
     
     
