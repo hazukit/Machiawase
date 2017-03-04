@@ -54,9 +54,6 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         toLocation = MLocation()
-        toLocation.latitude = 35.698353
-        toLocation.longitude = 139.773114
-        toLocation.altitude = 0
         
         self.captureStillImageView.setupCamera()
         self.captureStillImageView.startSession()
@@ -97,7 +94,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let latitude = (toLc.coordinate.latitude - fromLc.coordinate.latitude)
         let longitude = (toLc.coordinate.longitude - fromLc.coordinate.longitude)
         let altitude = (toLc.altitude - fromLc.altitude) / 100
-                let rang = atan2(latitude, longitude) +  (M_PI / 180 * Double(hd - 180))
+        let rang = atan2(latitude, longitude) +  (M_PI / 180 * Double(hd))
         let y = altitude * 0.5
         let x = dis * cos(rang)
         
@@ -106,6 +103,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         print("point x:", x)
         print("point y:", y)
         print("point hd:", hd)
+        print("point rang:", rang)
         print("point rang:", rang)
         return (CGFloat(x),CGFloat(y))
     }
@@ -116,6 +114,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         }
         var peopleArray:[PeopleLocation] = []
         for people in peoples {
+            print("point name:", people.name)
             let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: people.latitude, longitude: people.longitude), altitude: people.altitude, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
             let distance = currentLocation.distance(from: to)
             let v = convertToPoint(heading: heading, distance: distance,fromLocation: currentLocation, toLocation: to)
@@ -137,14 +136,20 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         location.longitude = fromLc.coordinate.longitude
         location.altitude = fromLc.altitude
         uploadMyLocation(fromLocation: location)
+        update()
         /*
+        toLocation.latitude = 35.698353
+        toLocation.longitude = 139.773114
+        toLocation.altitude = 300
+        
         let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
         let distance = fromLc.distance(from: to)
         
         let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
-        let altitude = (toLc.altitude - fromLc.altitude)
+        let altitude = (to.altitude - fromLc.altitude)
         let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
-        peopleManager.update(with: [p])*/
+        peopleManager.update(with: [p])
+ */
  
     }
     
@@ -225,7 +230,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
                 }
             }
             if let userId: [String : String] = id as! [String : String]? {
-                if let identifier: String = userId["identifier"] {
+                if let identifier: String = userId["id"] {
                     people.identifier = identifier
                 }
             }
