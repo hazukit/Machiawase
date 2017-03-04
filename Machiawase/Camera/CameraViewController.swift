@@ -55,7 +55,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
 //        }
 //        self.peopleManager.update(with: self.locations)
         
-        Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.updateLocation), userInfo: nil, repeats: true)
+//        Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.updateLocation), userInfo: nil, repeats: true)
     }
     
 //    var locations: [PeopleLocation] = []
