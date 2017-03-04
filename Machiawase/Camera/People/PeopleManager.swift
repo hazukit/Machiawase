@@ -47,6 +47,7 @@ class PeopleManager {
                 // Create new people view
                 let peopleView: PeopleView = PeopleView(with: location.name, identifier: location.identifier)
                 managedView.addSubview(peopleView)
+                managedView.addSubview(peopleView.outsideView)
                 self.peopleViews.append(peopleView)
             }
         }
@@ -55,6 +56,7 @@ class PeopleManager {
         for peopleView in self.peopleViews {
             let count: Int = locations.filter { $0.identifier == peopleView.identifier }.count
             if count == 0 {
+                peopleView.outsideView.removeFromSuperview()
                 peopleView.removeFromSuperview()
                 if let index: Int = self.peopleViews.index(of: peopleView) {
                     self.peopleViews.remove(at: index)
@@ -64,9 +66,13 @@ class PeopleManager {
         
         // Update each view
         for location in locations {
+            
             if let peopleView = self.peopleView(with: location.identifier) {
+            
                 peopleView.set(displayPoint: CGPoint(x: location.x, y: location.y))
                 peopleView.set(distance: location.distance, diffrenceOfAltitude: location.differenceOfAltitude)
+            
+                peopleView.outsideView.style = peopleView.outsideView.arrawStyle(for: location)
             }
         }
     }

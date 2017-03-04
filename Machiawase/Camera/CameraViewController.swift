@@ -49,7 +49,23 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         })
         
         self.view.addSubview(self.captureStillImageView)
+        
+//        self.locations = ["Swift", "Yuri"].enumerated().map { (index: Int, name: String) -> PeopleLocation in
+//            return PeopleLocation(identifier: name, name: name, x: CGFloat(Int(arc4random()%100)*index-100), y: CGFloat(Int(arc4random()%100)*index-100), distance: Int(arc4random()%10)*index-10, differenceOfAltitude: Int(arc4random()%10)*index-10)
+//        }
+//        self.peopleManager.update(with: self.locations)
+        
+        Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.updateLocation), userInfo: nil, repeats: true)
     }
+    
+//    var locations: [PeopleLocation] = []
+    
+//    func updateLocation() {
+//        self.locations = self.locations.map { (location: PeopleLocation) -> PeopleLocation in
+//            return PeopleLocation(identifier: location.name, name: location.name, x: location.x + CGFloat(Int(arc4random())%21-10), y: location.y + CGFloat(Int(arc4random())%21-10), distance: Int(location.distance + Int(arc4random())%21-10), differenceOfAltitude: Int(location.distance + Int(arc4random())%21-10))
+//        }
+//        self.peopleManager.update(with: self.locations)
+//    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
