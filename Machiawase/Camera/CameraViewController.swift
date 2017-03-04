@@ -127,7 +127,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
             let v = convertToPoint(heading: heading, distance: distance,fromLocation: currentLocation, toLocation: to)
             let altitude = (currentLocation.altitude - to.altitude)
             
-            let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
+            let p:PeopleLocation = PeopleLocation(identifier: people.identifier, name: people.name, x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
             peopleArray.append(p)
         }
         peopleManager.update(with: peopleArray)
