@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import FirebaseDatabase
 
 class CameraViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -15,17 +16,28 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     var heading: CLLocationDirection! = nil
     //    var currentLocation: MLocation! = nil
     var toLocation: MLocation! = nil // 後で配列にする
-    var currentLocation:CLLocation!;
-    
+    var currentLocation:CLLocation!
+    private let ref = FIRDatabase.database().reference()
+    private var firebaseName: String! = nil
+    private var firebaseId: String! = nil
+
     struct MLocation {
         public var latitude: CLLocationDegrees!
         public var longitude: CLLocationDegrees!
         public var altitude: CLLocationDistance!
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor.black
+        
+        let userDefaults = UserDefaults.standard
+        firebaseName = userDefaults.string(forKey: "name")
+        firebaseId = userDefaults.string(forKey: "firebaseId")
+        
+        ref.child("users").observe(.value, with: { snapshot in
+            self.observeOtherLocation(snapshot: snapshot)
+        })
         
         self.view.addSubview(self.captureStillImageView)
     }
@@ -60,6 +72,8 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     
     // MARK: Elements
     
+    lazy var peopleManager: PeopleManager = PeopleManager(with: self.view)
+    
     lazy var captureStillImageView: CaptureStillImageView = {
         let view: CaptureStillImageView = CaptureStillImageView(frame: self.view.bounds)
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -73,6 +87,8 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         if (hd == nil || fromLc == nil || toLc == nil) {
             return
         }
+    
+        uploadMyLocation(fromLocation: fromLc)
         
 //        toLocation.latitude = 35.6923069230659
 //        toLocation.longitude = 139.768417420218
@@ -84,11 +100,8 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let distance = fromLc.distance(from: to) / 100
         //let x = y
         let rang = atan2(latitude, longitude)
-        let rang2 = atan2(90 - fromLc.coordinate.latitude, fromLc.coordinate.longitude)
         let y = altitude * 0.5
         let x = distance * cos(rang * M_PI/180)
-        
-        
         
         print("point lat:", fromLc.coordinate.latitude)
         print("point lot:", fromLc.coordinate.longitude)
@@ -141,4 +154,21 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
             break
         }
     }
+    
+    /** upload my location data to firebase */
+    private func uploadMyLocation(fromLocation fromLc: MLocation) {
+        if let name: String = self.firebaseName {
+            let post = ["user": ["name": name], "location": ["longitude": fromLc.longitude, "latitude": fromLc.latitude, "altitude": fromLc.altitude]] as [String : Any]
+            if let id: String = self.firebaseId {
+                let childUpdates = ["/users/\(id)/": post]
+                ref.updateChildValues(childUpdates)
+            }
+        }
+    }
+    
+    /** observe firebase**/
+    private func observeOtherLocation(snapshot: FIRDataSnapshot) {
+      //
+    }
+
 }
