@@ -13,8 +13,9 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     
     var lm: CLLocationManager! = nil
     var heading: CLLocationDirection! = nil
-    var currentLocation: MLocation! = nil
+    //    var currentLocation: MLocation! = nil
     var toLocation: MLocation! = nil // 後で配列にする
+    var currentLocation:CLLocation!;
     
     struct MLocation {
         public var latitude: CLLocationDegrees!
@@ -67,21 +68,40 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     
     // MARK: -
     // MARK: private methods
-    private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: MLocation!,  toLocation toLc: MLocation!) {
+    
+    private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: CLLocation!,  toLocation toLc: MLocation!) {
         if (hd == nil || fromLc == nil || toLc == nil) {
             return
         }
         
-        /*
-        let latitude = (toLc.latitude - fromLc.latitude)
-        let longitude = (toLc.longitude - fromLc.longitude)
+//        toLocation.latitude = 35.6923069230659
+//        toLocation.longitude = 139.768417420218
+        let latitude = (toLc.latitude - fromLc.coordinate.latitude)
+        let longitude = (toLc.longitude - fromLc.coordinate.longitude)
         let altitude = (toLc.altitude - fromLc.altitude)
         
+        let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
+        let distance = fromLc.distance(from: to) / 100
+        //let x = y
+        let rang = atan2(latitude, longitude)
+        let rang2 = atan2(90 - fromLc.coordinate.latitude, fromLc.coordinate.longitude)
+        let y = altitude * 0.5
+        let x = distance * cos(rang * M_PI/180)
+        
+        
+        
+        print("point lat:", fromLc.coordinate.latitude)
+        print("point lot:", fromLc.coordinate.longitude)
+        print("point x:", x)
+        print("point y:", y)
         print("point hd:", hd)
-        */
+        print("point rang:", rang)
+        print("point rang2:", rang2/(M_PI / 180))
+        print("point rang:", rang2 - hd)
+        
     }
     
-    private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: MLocation!,  toLocations toLcs: [MLocation]!) {
+    private func displayPoints(heading hd: CLLocationDirection!, fromLocation fromLc: MLocation!,  toLocations toLcs: [MLocation]!) {
         
     }
     
@@ -93,10 +113,11 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         guard let newLocation = locations.last else {
             return
         }
-        currentLocation = MLocation()
-        currentLocation.latitude = newLocation.coordinate.latitude
-        currentLocation.longitude = newLocation.coordinate.longitude
-        currentLocation.altitude = newLocation.altitude
+        //        currentLocation = MLocation()
+        //        currentLocation.latitude = newLocation.coordinate.latitude
+        //        currentLocation.longitude = newLocation.coordinate.longitude
+        //        currentLocation.altitude = newLocation.altitude
+        currentLocation = newLocation;
         
         displayPoint(heading: heading, fromLocation: currentLocation, toLocation: toLocation)
     }
@@ -105,7 +126,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         heading = ((newHeading.trueHeading > 0) ? newHeading.trueHeading : newHeading.magneticHeading);
         
-//        heading = newHeading
+        //        heading = newHeading
         displayPoint(heading: heading, fromLocation: currentLocation, toLocation: toLocation)
     }
     
