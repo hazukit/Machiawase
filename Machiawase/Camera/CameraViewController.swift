@@ -83,25 +83,18 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     // MARK: -
     // MARK: private methods
     
-    private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: CLLocation!,  toLocation toLc: MLocation!) {
-        if (hd == nil || fromLc == nil || toLc == nil) {
-            return
-        }
-    
-        uploadMyLocation(fromLocation: fromLc)
+    private func convertToPoint(heading hd: CLLocationDirection!, distance dis:CLLocationDistance, fromLocation fromLc: CLLocation!,  toLocation toLc: CLLocation!) -> (x:CGFloat,y:CGFloat){
         
-//        toLocation.latitude = 35.6923069230659
-//        toLocation.longitude = 139.768417420218
-        let latitude = (toLc.latitude - fromLc.coordinate.latitude)
-        let longitude = (toLc.longitude - fromLc.coordinate.longitude)
+        //        toLocation.latitude = 35.6923069230659
+        //        toLocation.longitude = 139.768417420218
+        let latitude = (toLc.coordinate.latitude - fromLc.coordinate.latitude)
+        let longitude = (toLc.coordinate.longitude - fromLc.coordinate.longitude)
         let altitude = (toLc.altitude - fromLc.altitude)
         
-        let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
-        let distance = fromLc.distance(from: to) / 100
         //let x = y
         let rang = atan2(latitude, longitude)
         let y = altitude * 0.5
-        let x = distance * cos(rang * M_PI/180)
+        let x = dis * cos(rang * M_PI/180)
         
         print("point lat:", fromLc.coordinate.latitude)
         print("point lot:", fromLc.coordinate.longitude)
@@ -109,9 +102,24 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         print("point y:", y)
         print("point hd:", hd)
         print("point rang:", rang)
-        print("point rang2:", rang2/(M_PI / 180))
-        print("point rang:", rang2 - hd)
+//        print("point rang2:", rang2/(M_PI / 180))
+//        print("point rang:", rang2 - hd)
+        return (CGFloat(x),CGFloat(y))
+    }
+    
+    private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: CLLocation!,  toLocation toLc: MLocation!) {
+        if (hd == nil || fromLc == nil || toLc == nil) {
+            return
+        }
+//        uploadMyLocation(fromLocation: fromLc)
         
+        let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
+        let distance = fromLc.distance(from: to)
+        
+        let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
+        let altitude = (toLc.altitude - fromLc.altitude)
+        let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
+        peopleManager.update(with: [p])
     }
     
     private func displayPoints(heading hd: CLLocationDirection!, fromLocation fromLc: MLocation!,  toLocations toLcs: [MLocation]!) {
