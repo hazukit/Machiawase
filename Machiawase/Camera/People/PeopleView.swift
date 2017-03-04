@@ -42,6 +42,8 @@ class PeopleView: UIView {
     
     private(set) var identifier: String
     
+    let outsideView: PeopleOutsideView = PeopleOutsideView()
+    
     /// Point in the window where prigin is center point of the application window
     
     var displayPoint: CGPoint {
@@ -85,7 +87,7 @@ class PeopleView: UIView {
     /// Set view position in display
     /// - parameter displayPoint: center point of the mark contained in this view
     func set(displayPoint: CGPoint) {
-        self.center = CGPoint(x: UIScreen.main.bounds.width/2.0 + displayPoint.x, y: UIScreen.main.bounds.height/2.0 + displayPoint.y)
+        self.center = CGPoint(x: UIScreen.main.bounds.width/2.0 + displayPoint.x, y: UIScreen.main.bounds.height/2.0 - displayPoint.y)
     }
     
     /// Set information of distance.
