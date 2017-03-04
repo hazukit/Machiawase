@@ -94,16 +94,12 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
     
     private func convertToPoint(heading hd: CLLocationDirection!, distance dis:CLLocationDistance, fromLocation fromLc: CLLocation!,  toLocation toLc: CLLocation!) -> (x:CGFloat,y:CGFloat){
         
-        //        toLocation.latitude = 35.6923069230659
-        //        toLocation.longitude = 139.768417420218
         let latitude = (toLc.coordinate.latitude - fromLc.coordinate.latitude)
         let longitude = (toLc.coordinate.longitude - fromLc.coordinate.longitude)
-        let altitude = (toLc.altitude - fromLc.altitude)
-        
-        //let x = y
-        let rang = atan2(latitude, longitude) - 90
+        let altitude = (toLc.altitude - fromLc.altitude) / 100
+                let rang = atan2(latitude, longitude) +  (M_PI / 180 * Double(hd - 180))
         let y = altitude * 0.5
-        let x = dis * cos(rang * M_PI/180)
+        let x = dis * cos(rang)
         
         print("point lat:", fromLc.coordinate.latitude)
         print("point lot:", fromLc.coordinate.longitude)
@@ -111,8 +107,6 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         print("point y:", y)
         print("point hd:", hd)
         print("point rang:", rang)
-//        print("point rang2:", rang2/(M_PI / 180))
-//        print("point rang:", rang2 - hd)
         return (CGFloat(x),CGFloat(y))
     }
     
@@ -150,8 +144,8 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
         let altitude = (toLc.altitude - fromLc.altitude)
         let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
-        peopleManager.update(with: [p])
- */
+        peopleManager.update(with: [p])*/
+ 
     }
     
     
