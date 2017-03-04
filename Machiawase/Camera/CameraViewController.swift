@@ -116,23 +116,41 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         return (CGFloat(x),CGFloat(y))
     }
     
+    private func update() {
+        if (currentLocation == nil) {
+            return
+        }
+        var peopleArray:[PeopleLocation] = []
+        for people in peoples {
+            let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: people.latitude, longitude: people.longitude), altitude: people.altitude, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
+            let distance = currentLocation.distance(from: to)
+            let v = convertToPoint(heading: heading, distance: distance,fromLocation: currentLocation, toLocation: to)
+            let altitude = (currentLocation.altitude - to.altitude)
+            
+            let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
+            peopleArray.append(p)
+        }
+        peopleManager.update(with: peopleArray)
+    }
+    
     private func displayPoint(heading hd: CLLocationDirection!, fromLocation fromLc: CLLocation!,  toLocation toLc: MLocation!) {
         if (hd == nil || fromLc == nil || toLc == nil) {
             return
         }
-//        uploadMyLocation(fromLocation: fromLc)
         
+        var location = MLocation()
+        location.latitude = fromLc.coordinate.latitude
+        location.longitude = fromLc.coordinate.longitude
+        location.altitude = fromLc.altitude
+        uploadMyLocation(fromLocation: location)
+        /*
         let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
         let distance = fromLc.distance(from: to)
         
         let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
         let altitude = (toLc.altitude - fromLc.altitude)
         let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
-        peopleManager.update(with: [p])
-    }
-    
-    private func displayPoints(heading hd: CLLocationDirection!, fromLocation fromLc: MLocation!,  toLocations toLcs: [MLocation]!) {
-        
+        peopleManager.update(with: [p])*/
     }
     
     
@@ -222,6 +240,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
             self.peoples.removeAll()
         }
         self.peoples = peopleInfo
+        update()
     }
     
 }
