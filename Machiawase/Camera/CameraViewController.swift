@@ -97,6 +97,10 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let rang = atan2(latitude, longitude) +  (M_PI / 180 * Double(hd))
         let y = altitude * 0.5
         let x = dis * cos(rang)
+        /*
+        //let z = dis * sin(rang)
+        x = x/(z * tan()
+        */
         
         print("point lat:", fromLc.coordinate.latitude)
         print("point lot:", fromLc.coordinate.longitude)
@@ -137,10 +141,11 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         location.altitude = fromLc.altitude
         uploadMyLocation(fromLocation: location)
         update()
+        
         /*
         toLocation.latitude = 35.698353
         toLocation.longitude = 139.773114
-        toLocation.altitude = 300
+        toLocation.altitude = 1000
         
         let to = CLLocation.init(coordinate: CLLocationCoordinate2D.init(latitude: toLocation.latitude, longitude: toLocation.longitude), altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: -1, speed: 0, timestamp: Date())
         let distance = fromLc.distance(from: to)
@@ -148,8 +153,7 @@ class CameraViewController: UIViewController, CLLocationManagerDelegate {
         let v = convertToPoint(heading: hd, distance: distance,fromLocation: fromLc, toLocation: to)
         let altitude = (to.altitude - fromLc.altitude)
         let p:PeopleLocation = PeopleLocation(identifier: "test", name: "yuri", x: v.x, y: v.y, distance: Int(distance), differenceOfAltitude: Int(altitude))
-        peopleManager.update(with: [p])
- */
+        peopleManager.update(with: [p])*/
  
     }
     
